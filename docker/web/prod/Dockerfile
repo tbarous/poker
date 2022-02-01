@@ -4,6 +4,8 @@ ARG WEB_PATH
 
 COPY ./web $WEB_PATH
 
-RUN yarn
+WORKDIR $WEB_PATH
+
+RUN yarn && yarn build
 
 ENTRYPOINT ["yarn", "serve"]

@@ -16,3 +16,5 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 RUN composer install
 
+RUN chmod -R 777 storage/logs
+
