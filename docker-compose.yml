@@ -5,7 +5,9 @@ services:
     container_name: poker_nginx
     build:
       context: .
-      dockerfile: docker/nginx/prod/Dockerfile
+      dockerfile: docker/nginx/Dockerfile
+      args:
+        ENVIRONMENT: "prod"
     ports:
       - "80:80"
       - "8080:8080"
