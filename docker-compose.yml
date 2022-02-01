@@ -2,6 +2,7 @@ version: "3.5"
 
 services:
   nginx:
+    container_name: poker_nginx
     build:
       context: .
       dockerfile: docker/nginx/prod/Dockerfile
@@ -12,6 +13,7 @@ services:
       - api
       - web
   mysql:
+    container_name: poker_mysql
     image: mysql
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
@@ -21,9 +23,12 @@ services:
     networks:
       - api
   api:
+    container_name: poker_api
     build:
       context: .
       dockerfile: docker/api/prod/Dockerfile
+      args:
+        API_PATH: ${API_PATH}
     environment:
       APP_DEBUG: "false"
       APP_ENV: "production"
@@ -36,18 +41,20 @@ services:
       APP_NAME: ${API_NAME}
       APP_KEY: ${API_KEY}
       APP_URL: ${API_URL}
-      API_PATH: ${API_PATH}
     networks:
       - api
   mongo:
+    container_name: poker_mongo
     image: mongo
     networks:
       - api
   rabbitMQ:
+    container_name: poker_rabbitMQ
     image: rabbitmq
     networks:
       - api
   web:
+    container_name: poker_web
     build:
       context: .
       dockerfile: docker/web/prod/Dockerfile

@@ -4,9 +4,9 @@ FROM php:7.4-fpm
 
 ARG API_PATH
 
-RUN apt-get update && \
-    apt install zip unzip -y && \
-    docker-php-ext-install pdo pdo_mysql
+COPY docker/api/setup.sh /tmp/setup.sh
+
+RUN chmod +x /tmp/setup.sh && /tmp/setup.sh
 
 WORKDIR $API_PATH
 
@@ -17,4 +17,3 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 RUN composer install
 
 RUN chmod -R 777 storage/logs
-

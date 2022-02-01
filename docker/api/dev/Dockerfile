@@ -1,5 +1,9 @@
 FROM php:7.4-fpm
 
-RUN apt-get update && \
-    apt install zip unzip -y && \
-    docker-php-ext-install pdo pdo_mysql
+ARG API_PATH
+
+COPY docker/api/setup.sh /tmp/setup.sh
+
+RUN chmod +x /tmp/setup.sh && /tmp/setup.sh
+
+WORKDIR $API_PATH
