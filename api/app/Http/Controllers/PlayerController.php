@@ -74,7 +74,7 @@ class PlayerController extends Controller
      * @param Player $player
      * @return Response
      */
-    public function destroy(Player $player)
+    public function destroy(Player $player): Response
     {
         $player->delete();
 

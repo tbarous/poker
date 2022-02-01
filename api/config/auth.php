@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Authentication Defaults
@@ -64,9 +63,9 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'players' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\Player::class,
         ],
 
         // 'users' => [
@@ -109,7 +108,5 @@ return [
     | confirmation screen. By default, the timeout lasts for three hours.
     |
     */
-
     'password_timeout' => 10800,
-
 ];
