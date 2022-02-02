@@ -37,10 +37,11 @@ class PlayerController extends Controller
 
         $player = Player::create($data);
 
-        return response([
-            'players' => PlayerResource::collection($player),
-            'message' => 'Success'
-        ], 200);
+        $collection = new PlayerResource($player);
+
+        $data = ['players' => $collection, 'message' => 'Success'];
+
+        return response($data, 200);
     }
 
     /**
@@ -51,7 +52,7 @@ class PlayerController extends Controller
      */
     public function show(Player $player): Response
     {
-        return response([ 'employee' => new PlayerResource($player), 'message' => 'Success'], 200);
+        return response(['employee' => new PlayerResource($player), 'message' => 'Success'], 200);
     }
 
     /**
@@ -61,11 +62,11 @@ class PlayerController extends Controller
      * @param Player $player
      * @return Response
      */
-    public function update(Request $request, Player $player)
+    public function update(Request $request, Player $player): Response
     {
         $player->update($request->all());
 
-        return response([ 'employee' => new PlayerResource($player), 'message' => 'Success'], 200);
+        return response(['employee' => new PlayerResource($player), 'message' => 'Success'], 200);
     }
 
     /**

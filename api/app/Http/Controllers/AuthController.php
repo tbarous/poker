@@ -30,6 +30,8 @@ class AuthController extends Controller
 
     private function token(Player $player)
     {
+        $player->tokens()->delete();
+
         return $player->createToken(self::TOKEN_NAME)->plainTextToken;
     }
 
@@ -44,11 +46,16 @@ class AuthController extends Controller
         $valid = auth()->attempt($data);
 
         if (!$valid) {
-            return response(['error_message' => 'Incorrect Details. Please try again']);
+            return response(['error_message' => 'Incorrect Credentials. Please try again']);
         }
 
         $player = auth()->user();
 
-        return response(['player' => auth()->user(), 'token' => $this->token($player)]);
+        $data = [
+            'player' => $player,
+            'token' => $this->token($player)
+        ];
+
+        return response($data, 200);
     }
 }

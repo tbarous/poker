@@ -24,7 +24,9 @@ class PlayerStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|max:50'
+            'name' => 'required|max:255',
+            'email' => 'required|email|unique:players',
+            'password' => 'required'
         ];
     }
 
@@ -36,8 +38,12 @@ class PlayerStoreRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'title.required' => 'A title is required',
-            'body.required' => 'A message is required',
+            'name.required' => 'A name is required',
+            'name.max:255' => 'Name is too long',
+            'email.required' => 'An email is required',
+            'email.unique' => 'Email exists',
+            'email.email' => 'Not valid email',
+            'password.required' => 'Password is required',
         ];
     }
 }
