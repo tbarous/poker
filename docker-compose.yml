@@ -39,6 +39,12 @@ services:
       APP_NAME: ${API_NAME}
       APP_KEY: ${API_KEY}
       APP_URL: ${API_URL}
+      QUEUE_CONNECTION: ${API_QUEUE_CONNECTION}
+      RABBITMQ_HOST: ${API_RABBITMQ_HOST}
+      RABBITMQ_PORT: ${API_RABBITMQ_PORT}
+      RABBITMQ_USER: ${API_RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${API_RABBITMQ_PASSWORD}
+      RABBITMQ_VHOST: ${API_RABBITMQ_VHOST}
     networks:
       - api
   mongo:
@@ -48,7 +54,10 @@ services:
       - api
   rabbitMQ:
     container_name: poker_rabbitMQ
-    image: rabbitmq
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     networks:
       - api
   web:

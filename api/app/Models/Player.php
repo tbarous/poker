@@ -12,9 +12,7 @@ use Illuminate\Auth\Authenticatable as AuthenticableTrait;
 
 class Player extends Model implements \Illuminate\Contracts\Auth\Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
-
-    use AuthenticableTrait;
+    use HasApiTokens, HasFactory, Notifiable, AuthenticableTrait;
 
     /**
      * The attributes that are mass assignable.
