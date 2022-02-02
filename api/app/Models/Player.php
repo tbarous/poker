@@ -6,11 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Passport\HasApiTokens;
+use Laravel\Sanctum\HasApiTokens;
 
-class Player extends Model
+use Illuminate\Auth\Authenticatable as AuthenticableTrait;
+
+class Player extends Model implements \Illuminate\Contracts\Auth\Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+
+    use AuthenticableTrait;
 
     /**
      * The attributes that are mass assignable.

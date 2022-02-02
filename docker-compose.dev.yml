@@ -26,6 +26,8 @@ services:
       dockerfile: docker/dev-server/Dockerfile
       args:
         WEB_PATH: ${WEB_PATH}
+    ports:
+      - "4000:4000"
     volumes:
       - ./web:${WEB_PATH}
     networks:

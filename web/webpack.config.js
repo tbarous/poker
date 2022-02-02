@@ -31,8 +31,7 @@ const config = {
     devServer: {
         static: path.join(__dirname, "public/dist"),
         compress: true,
-        port: 4000,
-        public: 'dev-server'
+        port: 4000
     },
 };
 
