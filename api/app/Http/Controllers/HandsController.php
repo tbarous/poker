@@ -7,12 +7,31 @@ use App\Models\Hand;
 use App\Models\Player;
 use App\Models\Round;
 use File;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Request;
 use Queue;
 use Faker\Factory as Faker;
+use \Carbon\Carbon;
 
 class HandsController extends Controller
 {
+    const RANKS = [
+        '1' => 1,
+        '2' => 2,
+        '3' => 3,
+        '4' => 4,
+        '5' => 5,
+        '6' => 6,
+        '7' => 7,
+        '8' => 8,
+        '9' => 9,
+        '10' => 10,
+        'J' => 11,
+        'Q' => 12,
+        'K' => 13,
+        'A' => [1, 14]
+    ];
+
     public function upload()
     {
         $file = request()->hands;
@@ -35,55 +54,121 @@ class HandsController extends Controller
         $hands = explode(PHP_EOL, $content);
 
         $player1 = Player::create([
-            'name' => 'Player 1',
+            'name' => $faker->name,
             'email' => $faker->email,
-            'password' => '123456'
+            'password' => Hash::make($faker->password),
         ]);
 
         $player2 = Player::create([
-            'name' => 'Player 2',
+            'name' => $faker->name,
             'email' => $faker->email,
-            'password' => '123456'
+            'password' => Hash::make($faker->password),
         ]);
 
         foreach ($hands as $hand) {
-            if (empty($hand)) continue;
+            if (self::isValidHand($hand)) {
+                $cards = explode(' ', $hand);
 
-            $cards = explode(' ', $hand);
+                $player1Hand = implode(' ', array_slice($cards, 0, 5));
+                $player2Hand = implode(' ', array_slice($cards, 4, 5));
 
-            $player1Hand = array_slice($cards, 0, 5);
+                $roundsData[] = ['created_at' => $this->now(), 'updated_at' => $this->now(),];
 
-            $player2Hand = array_slice($cards, 4, 5);
+                $handsData[] = $this->getHandData($player1Hand, $latestRoundId, $player1->id);
 
-            $roundsData[] = [];
+                $handsData[] = $this->getHandData($player2Hand, $latestRoundId, $player2->id);
 
-            $handsData[] = [
-                'card_1' => $player1Hand[0],
-                'card_2' => $player1Hand[1],
-                'card_3' => $player1Hand[2],
-                'card_4' => $player1Hand[3],
-                'card_5' => $player1Hand[4],
-                'round_id' => $latestRoundId,
-                'player_id' => $player1->id
-            ];
-
-            $handsData[] = [
-                'card_1' => $player2Hand[0],
-                'card_2' => $player2Hand[1],
-                'card_3' => $player2Hand[2],
-                'card_4' => $player2Hand[3],
-                'card_5' => $player2Hand[4],
-                'round_id' => $latestRoundId,
-                'player_id' => $player2->id
-            ];
-
-            $latestRoundId++;
+                $latestRoundId++;
+            }
         }
+
         Round::insert($roundsData);
 
         Hand::insert($handsData);
+    }
 
+    /**
+     * @param $hand
+     * @return bool
+     */
+    private static function isValidHand($hand): bool
+    {
+        $cards = explode("", $hand);
 
-//        Queue::push(new UploadHands($file));
+        if (count($cards) !== 5) {
+            return false;
+        }
+
+        foreach ($cards as $card) {
+            $cardSplit =
+        }
+    }
+
+    private function now()
+    {
+        return Carbon::now()->toDateTimeString();
+    }
+
+    private function getHandStrength($cards)
+    {
+        $strength = 10;
+
+        $suits = [];
+        $ranks = [];
+
+        foreach ($cards as $card) {
+            $cardSplit = explode($card, "");
+
+            $ranks[] = $cardSplit[0];
+            $suits[] = $cardSplit[1];
+        }
+
+        $flush = $this->flush($suits);
+
+        return $strength;
+    }
+
+    function straight($ranks)
+    {
+        $rank = $ranks[0];
+
+        for ($i = 1; $i < 4; $i++) {
+            $r = $ranks[$i];
+        }
+    }
+
+    /**
+     * @param $suits
+     * @return bool
+     */
+    private function flush($suits): bool
+    {
+        $suit = $suits[0];
+
+        for ($i = 1; $i < 4; $i++) {
+            if ($suits[$i] !== $suit) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $hand
+     * @param $roundId
+     * @param $playerId
+     * @return array
+     */
+    private function getHandData($hand, $roundId, $playerId): array
+    {
+        return [
+            'cards' => $hand,
+            'round_id' => $roundId,
+            'player_id' => $playerId,
+            'created_at' => $this->now(),
+            'updated_at' => $this->now(),
+            'strength' => $this->getHandStrength()
+        ];
     }
 }

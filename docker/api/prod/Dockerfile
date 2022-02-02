@@ -19,3 +19,5 @@ RUN composer install
 RUN chmod -R 777 storage/logs
 
 RUN php artisan migrate
+
+RUN php artisan db:seed

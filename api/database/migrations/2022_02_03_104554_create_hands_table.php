@@ -16,17 +16,12 @@ class CreateHandsTable extends Migration
         Schema::create('hands', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('card_1');
-            $table->string('card_2');
-            $table->string('card_3');
-            $table->string('card_4');
-            $table->string('card_5');
-
+            $table->string('cards');
+            $table->integer('strength');
+            $table->boolean('winner');
             $table->unsignedBigInteger('round_id');
             $table->unsignedBigInteger('player_id');
-
             $table->unique(['round_id', 'player_id']);
-
             $table->foreign('player_id')->references('id')->on('players');
             $table->foreign('round_id')->references('id')->on('rounds');
         });
