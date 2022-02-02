@@ -28,13 +28,6 @@ class AuthController extends Controller
         return response(['player' => $player, 'token' => $this->token($player)], 200);
     }
 
-    private function token(Player $player)
-    {
-        $player->tokens()->delete();
-
-        return $player->createToken(self::TOKEN_NAME)->plainTextToken;
-    }
-
     /**
      * @param LoginRequest $request
      * @return mixed
@@ -57,5 +50,16 @@ class AuthController extends Controller
         ];
 
         return response($data, 200);
+    }
+
+    /**
+     * @param Player $player
+     * @return string
+     */
+    private function token(Player $player): string
+    {
+        $player->tokens()->delete();
+
+        return $player->createToken(self::TOKEN_NAME)->plainTextToken;
     }
 }

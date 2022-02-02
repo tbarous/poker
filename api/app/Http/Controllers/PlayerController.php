@@ -6,7 +6,7 @@ use App\Http\Requests\PlayerStoreRequest;
 use App\Http\Resources\PlayerResource;
 use App\Models\Player;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Response;
 
 class PlayerController extends Controller
 {
@@ -28,7 +28,7 @@ class PlayerController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param PlayerStoreRequest $request
      * @return Response
      */
     public function store(PlayerStoreRequest $request): Response
@@ -52,7 +52,14 @@ class PlayerController extends Controller
      */
     public function show(Player $player): Response
     {
-        return response(['employee' => new PlayerResource($player), 'message' => 'Success'], 200);
+        $player = new PlayerResource($player);
+
+        $data = [
+            'player' => $player,
+            'message' => 'Success'
+        ];
+
+        return response($data, 200);
     }
 
     /**
