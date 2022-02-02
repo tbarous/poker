@@ -13,8 +13,8 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
-        'passwords' => 'users',
+        'guard' => 'api',
+        'passwords' => 'players',
     ],
 
     /*
@@ -35,13 +35,9 @@ return [
     */
 
     'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
         'api' => [
             'driver' => 'passport',
-            'provider' => 'users',
+            'provider' => 'players',
         ],
     ],
 
@@ -67,11 +63,6 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Player::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
     ],
 
     /*
@@ -90,8 +81,8 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
+        'players' => [
+            'provider' => 'players',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,

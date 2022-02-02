@@ -17,6 +17,7 @@ services:
   mysql:
     container_name: poker_mysql
     image: mysql
+    restart: always
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
@@ -64,6 +65,7 @@ services:
       - "3000:3000"
     environment:
       WEB_PATH: ${WEB_PATH}
+      ENVIRONMENT: "prod"
     networks:
       - web
 

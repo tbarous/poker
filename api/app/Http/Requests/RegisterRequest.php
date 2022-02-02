@@ -29,4 +29,17 @@ class RegisterRequest extends FormRequest
             'password' => 'required|confirmed'
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'A name is required',
+            'name.max:255' => 'Name is too long',
+            'email.required' => 'An email is required',
+            'email.unique' => 'Email exists',
+            'email.email' => 'Not valid email',
+            'password.required' => 'Password is required',
+            'password.confirmed' => 'Password is not confirmed'
+        ];
+    }
 }

@@ -1,29 +1,40 @@
-import {Axios} from "axios";
+import {Axios, AxiosInstance} from "axios";
 
 class API {
-    private axiosInstance;
-    private multipartAxiosInstance;
+    private axios: Axios;
+    private baseURL: string = "http://localhost:8080/api/";
 
     constructor() {
-        const element = document.head.querySelector("[name=_token][content]");
+        // const element = document.head.querySelector("[name=_token][content]");
 
-        const token = element.content;
+        // const token = element.content;
 
-        const baseURL = 'http://localhost/api/';
-
-        this.axiosInstance = new Axios({
-            headers: {'X-CSRF-TOKEN': token, 'Content-Type': 'application/json', 'Accept': 'application/json'},
-            baseURL,
+        this.axios = new Axios({
+            headers: {
+                // 'X-CSRF-TOKEN': token,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            baseURL: this.baseURL,
             transformRequest: [(data, headers) => JSON.stringify(data)],
             transformResponse: [(data) => JSON.parse(data)],
         })
-
-        this.multipartAxiosInstance = new Axios({
-            headers: {'X-CSRF-TOKEN': token, 'Content-Type': 'multipart/form-data', 'Accept': 'application/json'},
-            baseURL,
-            transformResponse: [(data) => JSON.parse(data)],
-        })
     }
+
+    register(
+        name: string,
+        email: string,
+        password: string,
+        password_confirmation: string
+    ) {
+        this.axios.post("register", {
+            name, email, password, password_confirmation
+        })
+            .then((res) => {
+                console.log(res);
+            })
+    }
+
 
     createProduct(name: string, barcode: string, price: number, image = null) {
         const formData = new FormData();

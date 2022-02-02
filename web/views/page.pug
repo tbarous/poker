@@ -1,0 +1,13 @@
+html
+    head
+        title=title
+    body
+        div(id="app")
+
+        script.
+            window.env = "#{env}";
+
+        if env === "dev"
+            script(src="http://localhost:4000/bundle.js")
+        else
+            script(src="/dist/bundle.js")
