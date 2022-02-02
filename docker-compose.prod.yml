@@ -1,0 +1,18 @@
+version: "3.5"
+
+services:
+  nginx:
+    build:
+      args:
+        ENVIRONMENT: ${ENV_PROD}
+  api:
+    build:
+      dockerfile: docker/api/prod/Dockerfile
+    environment:
+      APP_ENV: ${ENV_PROD}
+      APP_DEBUG: "false"
+  web:
+    build:
+      dockerfile: docker/web/Dockerfile
+    environment:
+      ENVIRONMENT: ${ENV_PROD}

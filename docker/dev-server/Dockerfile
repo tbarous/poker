@@ -6,4 +6,6 @@ COPY ./web $WEB_PATH
 
 WORKDIR $WEB_PATH
 
-ENTRYPOINT ["yarn", "serve"]
+RUN yarn
+
+ENTRYPOINT ["yarn", "start"]

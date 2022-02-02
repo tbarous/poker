@@ -4,7 +4,7 @@ services:
   nginx:
     build:
       args:
-        ENVIRONMENT: "dev"
+        ENVIRONMENT: ${ENV_DEV}
   api:
     build:
       dockerfile: docker/api/dev/Dockerfile
@@ -19,7 +19,17 @@ services:
     volumes:
       - ./web:${WEB_PATH}
     environment:
-      ENVIRONMENT: "dev"
+      ENVIRONMENT: ${ENV_DEV}
+  dev-server:
+    build:
+      context: .
+      dockerfile: docker/dev-server/Dockerfile
+      args:
+        WEB_PATH: ${WEB_PATH}
+    volumes:
+      - ./web:${WEB_PATH}
+    networks:
+      - web
   phpmyadmin:
     image: phpmyadmin
     restart: always
