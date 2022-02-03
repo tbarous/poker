@@ -15,4 +15,4 @@ Route::post('/hands', [HandsController::class, 'upload']);
 
 Route::get('/statistics', [StatisticsController::class, 'index']);
 
-Route::apiResource('player', 'PlayerController')->middleware('auth:sanctum');
+Route::apiResource('player', 'PlayersController')->middleware('auth:sanctum');

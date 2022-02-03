@@ -8,7 +8,7 @@ use App\Models\Player;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
-class PlayerController extends Controller
+class PlayersController extends Controller
 {
     /**
      * Display a listing of the resource.

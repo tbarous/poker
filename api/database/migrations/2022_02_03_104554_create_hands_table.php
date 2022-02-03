@@ -23,6 +23,7 @@ class CreateHandsTable extends Migration
             $table->unsignedBigInteger('fifth_card_id');
             $table->unsignedBigInteger('round_id');
             $table->unsignedBigInteger('player_id');
+            $table->unsignedBigInteger('strength_id');
 
             $table->unique(['round_id', 'player_id']);
 
@@ -33,6 +34,7 @@ class CreateHandsTable extends Migration
             $table->foreign('third_card_id')->references('id')->on('cards');
             $table->foreign('fourth_card_id')->references('id')->on('cards');
             $table->foreign('fifth_card_id')->references('id')->on('cards');
+            $table->foreign('strength_id')->references('id')->on('strengths');
         });
     }
 

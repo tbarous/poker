@@ -9,16 +9,6 @@ class Round extends Model
 {
     use HasFactory;
 
-    public static function getLastId(): int
-    {
-        $latestRound = self::latest();
-
-        if (empty($latestRoundId)) {
-            return 1;
-        }
-
-        return $latestRound->id;
-    }
 
     public function hands()
     {

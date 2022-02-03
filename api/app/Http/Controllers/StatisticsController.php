@@ -11,6 +11,11 @@ class StatisticsController extends Controller
 {
     public function index()
     {
+
+        $hand = Hand::with('calculateStrength')->get();
+        print_r($hand->calculateStrength());die;
+
+
         return RoundResource::collection(Round::with('hands')->get());
     }
 }
