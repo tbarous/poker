@@ -26,4 +26,34 @@ class Hand extends Model
         'player_id',
         'round_id'
     ];
+
+    public function strength()
+    {
+        return $this->belongsTo(Strength::class);
+    }
+
+    public function firstCard()
+    {
+        return $this->belongsTo(Card::class);
+    }
+
+    public function secondCard()
+    {
+        return $this->belongsTo(Card::class);
+    }
+
+    public function thirdCard()
+    {
+        return $this->belongsTo(Card::class);
+    }
+
+    public function fourthCard()
+    {
+        return $this->belongsTo(Card::class);
+    }
+
+    public function fifthCard()
+    {
+        return $this->belongsTo(Card::class);
+    }
 }
