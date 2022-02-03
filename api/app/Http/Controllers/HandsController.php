@@ -18,7 +18,7 @@ class HandsController extends Controller
 {
     private function isValidFile($file)
     {
- 
+
     }
 
     public function upload()
