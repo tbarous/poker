@@ -9,29 +9,38 @@ class Hand extends Model
 {
     use HasFactory;
 
+    public function __construct($array)
+    {
+
+    }
+
+    const CARDS_ID = ['first_card_id', 'second_card_id', 'third_card_id', 'fourth_card_id', 'fifth_card_id'];
+
     protected $fillable = [
-        'card_1',
-        'card_2',
-        'card_3',
-        'card_4',
-        'card_5'
+        'first_card_id',
+        'second_card_id',
+        'third_card_id',
+        'fourth_card_id',
+        'fifth_card_id',
+        'player_id',
+        'round_id'
     ];
 
-    public function getStrength($cards)
+    public function calculateStrength()
     {
         $strength = 10;
 
-        $suits = [];
-        $ranks = [];
-
-        foreach ($cards as $card) {
-            $cardSplit = explode($card, "");
-
-            $ranks[] = $cardSplit[0];
-            $suits[] = $cardSplit[1];
-        }
-
-        $flush = $this->flush($suits);
+//        $suits = [];
+//        $ranks = [];
+//
+//        foreach ($cards as $card) {
+//            $cardSplit = explode($card, "");
+//
+//            $ranks[] = $cardSplit[0];
+//            $suits[] = $cardSplit[1];
+//        }
+//
+//        $flush = $this->flush($suits);
 
         return $strength;
     }

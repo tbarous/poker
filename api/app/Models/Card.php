@@ -16,7 +16,7 @@ class Card extends Model
 
     const Suits = ['H', 'C', 'S', 'D'];
 
-    const Ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+    const Ranks = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'];
 
     /**
      * @return string
@@ -32,10 +32,5 @@ class Card extends Model
     public function getRank(): string
     {
         return $this->rank;
-    }
-
-    public static function addCard($string)
-    {
-
     }
 }

@@ -21,91 +21,137 @@ class HandsController extends Controller
      */
     public function upload()
     {
-        $file = request()->hands;
+        $handsToInsert = [];
+        $roundsToInsert = [];
 
-        if (!self::isValidSize($file)) {
-            return response(['error_message' => 'File size is too large.']);
-        };
+        $playersIds = [];
 
-        $content = File::get($file);
-        $faker = Faker::create();
-        $cards = Card::get();
+        for ($i = 0; $i < 9; $i++) {
+            $playersIds[] = Player::factory()->create()->id;
+        }
 
-        $handsData = [];
-        $roundsData = [];
+        $cardsCollection = Card::get();
+        $lastRoundId = Round::getLastId();
 
-        dd($cards);
+        $rounds = $this->getRounds();
 
-        $hands = explode(PHP_EOL, $content);
+        foreach ($rounds as $roundKey => $round) {
+            $hands = $this->getHands($round);
 
-        $player1 = Player::factory()->make();
-        $player2 = Player::factory()->make();
+            if (empty($hands)) continue;
 
-        foreach ($hands as $hand) {
-            if (self::isValidHand($hand)) {
-                $cards = explode(' ', $hand);
+            foreach ($hands as $handKey => $hand) {
+                $cards = $this->getCards($hand);
 
-                $player1Hand = implode(' ', array_slice($cards, 0, 5));
-                $player2Hand = implode(' ', array_slice($cards, 4, 5));
+                if (empty($cards)) continue;
 
-                $roundsData[] = [
+                $handToInsert = [
+                    'player_id' => $playersIds[$handKey],
                     'created_at' => Carbon::now()->toDateTimeString(),
-                    'updated_at' => Carbon::now()->toDateTimeString()
+                    'updated_at' => Carbon::now()->toDateTimeString(),
+                    'round_id' => $lastRoundId
                 ];
 
-                $handsData[] = $this->getHandData($player1Hand, $latestRoundId, $player1->id);
-                $handsData[] = $this->getHandData($player2Hand, $latestRoundId, $player2->id);
+                foreach ($cards as $cardKey => $card) {
+                    $suit = $this->getSuit($card);
+                    $rank = $this->getRank($card);
 
-                $latestRoundId++;
+                    $collectionCard = $cardsCollection->where("suit", $suit)->where("rank", $rank)->first();
+
+                    if ($collectionCard) {
+                        $handToInsert[Hand::CARDS_ID[$cardKey]] = $collectionCard->id;
+                    }
+                }
+
+                $handsToInsert[] = $handToInsert;
+            }
+
+            $roundsToInsert[] = $this->getRoundToInsert();
+
+            $lastRoundId++;
+        }
+
+        Round::insert($roundsToInsert);
+        Hand::insert($handsToInsert);
+    }
+
+    /**
+     * @return array
+     */
+    private function getRoundToInsert(): array
+    {
+        return ['created_at' => Carbon::now()->toDateTimeString(), 'updated_at' => Carbon::now()->toDateTimeString()];
+    }
+
+    /**
+     * @return false|string[]
+     */
+    private function getRounds()
+    {
+        $file = request()->hands;
+
+        $size = File::size($file);
+
+        if ($size > 100000) return [];
+
+        $content = File::get($file);
+
+        return explode(PHP_EOL, $content);
+    }
+
+    /**
+     * @param $card
+     * @return mixed|string
+     */
+    private function getSuit($card)
+    {
+        $split = str_split($card);
+
+        return $split[1];
+    }
+
+    /**
+     * @param $card
+     * @return mixed|string
+     */
+    private function getRank($card)
+    {
+        $split = str_split($card);
+
+        return $split[0];
+    }
+
+    /**
+     * @param $hand
+     * @return false|string[]
+     */
+    private function getCards($hand)
+    {
+        return explode(" ", $hand);
+    }
+
+    /**
+     * @param $round
+     * @return array
+     */
+    private function getHands($round): array
+    {
+        $cards = explode(" ", $round);
+
+        $hands = [];
+
+        $hand = [];
+
+        foreach ($cards as $card) {
+            $hand[] = $card;
+
+            if (count($hand) === 5) {
+                $hands[] = implode(" ", $hand);
+
+                $hand = [];
             }
         }
 
-        Round::insert($roundsData);
-
-        Hand::insert($handsData);
-    }
-
-    private static function isValidSize($file): bool
-    {
-        $size = File::size($file);
-
-        if ($size > 100000) return false;
-
-        return true;
-    }
-
-    /**
-     * @param $hand
-     * @return bool
-     */
-    private static function isValidHand($hand): bool
-    {
-        $cards = explode("", $hand);
-
-        if (count($cards) !== 5) {
-            return false;
-        }
-
-        foreach ($cards as $card) {
-//            $cardSplit =
-        }
-    }
-
-    /**
-     * @param $hand
-     * @param $roundId
-     * @param $playerId
-     * @return array
-     */
-    private function getHandData($hand, $roundId, $playerId): array
-    {
-        return [
-            'cards' => $hand,
-            'round_id' => $roundId,
-            'player_id' => $playerId,
-            'created_at' => Carbon::now()->toDateTimeString(),
-            'updated_at' => Carbon::now()->toDateTimeString(),
-            'strength' => $this->getHandStrength()
-        ];
+        return $hands;
     }
 }

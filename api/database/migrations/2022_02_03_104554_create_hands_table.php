@@ -16,7 +16,6 @@ class CreateHandsTable extends Migration
         Schema::create('hands', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->integer('strength');
             $table->unsignedBigInteger('first_card_id');
             $table->unsignedBigInteger('second_card_id');
             $table->unsignedBigInteger('third_card_id');
