@@ -17,8 +17,7 @@ class StatisticsController extends Controller
             'hands.secondCard',
             'hands.thirdCard',
             'hands.fourthCard',
-            'hands.fifthCard',
-            'hands.winner'
+            'hands.fifthCard'
         )->get());
     }
 }

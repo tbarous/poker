@@ -19,6 +19,7 @@ class StrengthCalculator
     public function strength($cards)
     {
         $this->cards = $cards;
+        $this->counts = [];
 
         $this->setCounts();
 
@@ -72,7 +73,7 @@ class StrengthCalculator
             if (array_key_exists($rank, $this->counts)) {
                 $this->counts[$rank]++;
             } else {
-                $this->counts[$rank] = 0;
+                $this->counts[$rank] = 1;
             }
         }
     }

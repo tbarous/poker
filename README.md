@@ -12,10 +12,14 @@ Images included:
 - mongoDB
 - composer
 
-*How to use:*
+### Instructions:
 
-To start the project run in the root directory:
+Initialize the project with:
 
     docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+
+Run migrations inside api container:
+
+    docker exec -it poker_api php artisan migrate:fresh --seed
 
 Application is available on http://localhost
