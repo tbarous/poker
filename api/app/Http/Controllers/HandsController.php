@@ -16,30 +16,29 @@ use \Carbon\Carbon;
 
 class HandsController extends Controller
 {
-    private function isValidFile($file)
-    {
-
-    }
-
+    /**
+     * @return void
+     */
     public function upload()
     {
         $file = request()->hands;
 
-        $content = File::get($file);
+        if (!self::validSize($file)) {
+            return;
+        }
 
+        $content = File::get($file);
         $faker = Faker::create();
+        $cards = Card::get();
 
         $handsData = [];
         $roundsData = [];
 
-        $cards = Card::get();
-
         dd($cards);
 
-        $hands = explode(PHP_EOL, $content);
+        $handsArray = explode(PHP_EOL, $content);
 
         $player1 = Player::factory()->make();
-
         $player2 = Player::factory()->make();
 
         foreach ($hands as $hand) {
@@ -62,6 +61,15 @@ class HandsController extends Controller
         Round::insert($roundsData);
 
         Hand::insert($handsData);
+    }
+
+    private static function validSize($file): bool
+    {
+        $size = File::size($file);
+
+        if ($size > 100000) return false;
+
+        return true;
     }
 
     /**
