@@ -23,9 +23,9 @@ class HandsController extends Controller
     {
         $file = request()->hands;
 
-        if (!self::validSize($file)) {
-            return;
-        }
+        if (!self::isValidSize($file)) {
+            return response(['error_message' => 'File size is too large.']);
+        };
 
         $content = File::get($file);
         $faker = Faker::create();
@@ -36,7 +36,7 @@ class HandsController extends Controller
 
         dd($cards);
 
-        $handsArray = explode(PHP_EOL, $content);
+        $hands = explode(PHP_EOL, $content);
 
         $player1 = Player::factory()->make();
         $player2 = Player::factory()->make();
@@ -48,10 +48,12 @@ class HandsController extends Controller
                 $player1Hand = implode(' ', array_slice($cards, 0, 5));
                 $player2Hand = implode(' ', array_slice($cards, 4, 5));
 
-                $roundsData[] = ['created_at' => $this->now(), 'updated_at' => $this->now(),];
+                $roundsData[] = [
+                    'created_at' => Carbon::now()->toDateTimeString(),
+                    'updated_at' => Carbon::now()->toDateTimeString()
+                ];
 
                 $handsData[] = $this->getHandData($player1Hand, $latestRoundId, $player1->id);
-
                 $handsData[] = $this->getHandData($player2Hand, $latestRoundId, $player2->id);
 
                 $latestRoundId++;
@@ -63,7 +65,7 @@ class HandsController extends Controller
         Hand::insert($handsData);
     }
 
-    private static function validSize($file): bool
+    private static function isValidSize($file): bool
     {
         $size = File::size($file);
 
@@ -89,11 +91,6 @@ class HandsController extends Controller
         }
     }
 
-    private function now()
-    {
-        return Carbon::now()->toDateTimeString();
-    }
-
     /**
      * @param $hand
      * @param $roundId
@@ -106,8 +103,8 @@ class HandsController extends Controller
             'cards' => $hand,
             'round_id' => $roundId,
             'player_id' => $playerId,
-            'created_at' => $this->now(),
-            'updated_at' => $this->now(),
+            'created_at' => Carbon::now()->toDateTimeString(),
+            'updated_at' => Carbon::now()->toDateTimeString(),
             'strength' => $this->getHandStrength()
         ];
     }

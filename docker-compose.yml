@@ -27,8 +27,11 @@ services:
     container_name: poker_api
     build:
       context: .
+      dockerfile: docker/api/Dockerfile
       args:
         API_PATH: ${API_PATH}
+    depends_on:
+      - mysql
     environment:
       DB_CONNECTION: ${API_DB_CONNECTION}
       DB_HOST: ${API_DB_HOST}
@@ -63,6 +66,7 @@ services:
   web:
     container_name: poker_web
     build:
+      dockerfile: docker/web/Dockerfile
       context: .
       args:
         WEB_PATH: ${WEB_PATH}

@@ -8,6 +8,8 @@ Images included:
 - Redis
 - PHP fpm
 - nginx
+- rabbitmq
+- mongoDB
 - composer
 
 *How to use:*

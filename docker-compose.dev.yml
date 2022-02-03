@@ -6,16 +6,12 @@ services:
       args:
         ENVIRONMENT: ${ENV_DEV}
   api:
-    build:
-      dockerfile: docker/api/dev/Dockerfile
     volumes:
       - ./api:${API_PATH}
     environment:
       APP_ENV: "local"
       APP_DEBUG: "true"
   web:
-    build:
-      dockerfile: docker/web/dev/Dockerfile
     volumes:
       - ./web:${WEB_PATH}
     environment:
@@ -35,6 +31,8 @@ services:
   phpmyadmin:
     image: phpmyadmin
     restart: always
+    depends_on:
+      - mysql
     networks:
       - api
     ports:

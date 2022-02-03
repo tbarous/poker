@@ -16,14 +16,24 @@ class CreateHandsTable extends Migration
         Schema::create('hands', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('cards');
             $table->integer('strength');
-            $table->boolean('winner');
+            $table->unsignedBigInteger('first_card_id');
+            $table->unsignedBigInteger('second_card_id');
+            $table->unsignedBigInteger('third_card_id');
+            $table->unsignedBigInteger('fourth_card_id');
+            $table->unsignedBigInteger('fifth_card_id');
             $table->unsignedBigInteger('round_id');
             $table->unsignedBigInteger('player_id');
+
             $table->unique(['round_id', 'player_id']);
+
             $table->foreign('player_id')->references('id')->on('players');
             $table->foreign('round_id')->references('id')->on('rounds');
+            $table->foreign('first_card_id')->references('id')->on('cards');
+            $table->foreign('second_card_id')->references('id')->on('cards');
+            $table->foreign('third_card_id')->references('id')->on('cards');
+            $table->foreign('fourth_card_id')->references('id')->on('cards');
+            $table->foreign('fifth_card_id')->references('id')->on('cards');
         });
     }
 
