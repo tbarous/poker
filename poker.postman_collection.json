@@ -74,7 +74,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Tasos Barous\",\n    \"email\": \"tasosbarous2@gmail.com\",\n    \"password\": \"123456\"\n}",
+							"raw": "{\n    \"name\": \"Tasos Barous\",\n    \"email\": \"tasosbar33ous2@gmail.com\",\n    \"password\": \"123456\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -100,7 +100,13 @@
 					"name": "Update Player",
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"name\": \"Tasos Barous233\",\n    \"email\": \"tasosbarous@gmail.com\",\n    \"password\": \"123456\"\n}",
@@ -242,7 +248,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Tasos Barous\",\n    \"email\": \"tasosbarous@gmail.com\",\n    \"password\": \"123456\",\n    \"password_confirmation\": \"123456\"\n}",
+							"raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"johndoe@email.com\",\n    \"password\": \"123456\",\n    \"password_confirmation\": \"123456\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -267,11 +273,78 @@
 			]
 		},
 		{
-			"name": "Get CSRF",
+			"name": "Add Poker Data",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "multipart/form-data",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "hands",
+							"type": "file",
+							"src": "/home/node1/Desktop/poker/api/storage/app/private/hands.txt"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/hands",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"hands"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Statistics",
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": null
+				"url": {
+					"raw": "http://localhost:8080/api/statistics",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"statistics"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Best Hands",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/best-hands",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"best-hands"
+					]
+				}
 			},
 			"response": []
 		}

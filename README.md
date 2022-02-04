@@ -22,6 +22,10 @@ Run migrations inside api container:
 
     docker exec -it poker_api php artisan migrate:fresh --seed
 
+Postman collection for api calls exists in root with name: 
+
+    poker.postman_collection.json
+
 - phpmyadmin available on: http://localhost:8000 [server: mysql, username: root, password: password]
 - rabbitmq manager available on: http://localhost:15672 [username: guest, password: guest]
 - frontend react application available on http://localhost
