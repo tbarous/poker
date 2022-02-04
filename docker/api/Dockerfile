@@ -4,7 +4,10 @@ FROM php:7.4-fpm
 
 ARG API_PATH
 
-RUN apt-get update && apt install zip unzip -y && docker-php-ext-install pdo pdo_mysql
+RUN apt-get update && \
+    apt install zip unzip -y && \
+    docker-php-ext-install pdo pdo_mysql && \
+    docker-php-ext-install sockets
 
 WORKDIR $API_PATH
 
