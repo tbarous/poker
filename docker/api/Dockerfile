@@ -15,6 +15,8 @@ COPY api .
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
+RUN php artisan cache:clear
+
 RUN composer install
 
 RUN chmod -R 777 storage
