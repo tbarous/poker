@@ -12,6 +12,6 @@ COPY api .
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
-RUN composer install --ignore-platform-req=ext-sockets
+RUN composer update && composer install --ignore-platform-req=ext-sockets
 
 RUN chmod -R 777 storage
