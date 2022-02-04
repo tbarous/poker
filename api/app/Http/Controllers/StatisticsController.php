@@ -11,13 +11,16 @@ class StatisticsController extends Controller
 {
     public function index()
     {
-        return RoundResource::collection(Round::with(
-            'hands.strength',
-            'hands.firstCard',
-            'hands.secondCard',
-            'hands.thirdCard',
-            'hands.fourthCard',
-            'hands.fifthCard'
-        )->get());
+        $rounds = Round::select(['id'])->with(
+            'hands',
+            'hands.firstCard:id,rank,suit',
+            'hands.strength:id,name',
+            'hands.secondCard:id,rank,suit',
+            'hands.thirdCard:id,rank,suit',
+            'hands.fourthCard:id,rank,suit',
+            'hands.fifthCard:id,rank,suit'
+        )->get();
+
+        return response()->json(['rounds' => $rounds], 200);
     }
 }

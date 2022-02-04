@@ -9,6 +9,10 @@ class Hand extends Model
 {
     use HasFactory;
 
+    protected $attributes = [
+        'id'
+    ];
+
     const CARDS_ID = [
         'first_card_id',
         'second_card_id',

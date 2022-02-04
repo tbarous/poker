@@ -18,8 +18,8 @@ class Round extends Model
 
     public function getWinnerAttribute()
     {
-        $hands =$this->hands()->get();
+        $hands = $this->hands()->get();
 
-        return $hands->min('strength');
+        return $hands->min('strength')->name;
     }
 }
