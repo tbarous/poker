@@ -15,6 +15,6 @@ COPY api .
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
-RUN rm bootstrap/cache/config.php && composer install
+RUN rm ./bootstrap/cache/config.php && composer install
 
 RUN chmod -R 777 storage
