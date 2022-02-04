@@ -1,4 +1,4 @@
-FROM composer:1.1.3 as composer
+FROM composer:2.2.5 as composer
 
 FROM php:7.4-fpm
 
@@ -14,10 +14,6 @@ WORKDIR $API_PATH
 COPY api .
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
-
-RUN rm -rf vendor
-
-RUN rm composer.lock
 
 RUN composer install
 
