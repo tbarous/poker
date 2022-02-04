@@ -3,22 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\FileParser;
-use Error;
+use Doctrine\DBAL\Exception;
 
 class HandsController extends Controller
 {
+    /**
+     * @return mixed
+     * @throws \Exception
+     */
     public function upload()
     {
         $file = request()->hands;
 
         try {
-            FileParser::parse($file);
-        } catch (Error $error) {
-            dd($error);
+            $fileParser = new FileParser();
 
-            return response(['error' => $error]);
+            $fileParser->parse($file);
+
+            $data = ['Successfully inserted hands.'];
+
+            return response()->json($data, 200);
+        } catch (Exception $e) {
+            $data = ['error' => $e->getMessage()];
+
+            return response()->json($data);
         }
-
-        return response(['Success'], 200);
     }
 }

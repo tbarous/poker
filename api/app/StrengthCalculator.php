@@ -32,7 +32,7 @@ class StrengthCalculator
         $this->strengths = Strength::get();
     }
 
-    public function strength($cards)
+    public function strengthId($cards)
     {
         $counts = $this->getCounts($cards);
 

@@ -12,7 +12,6 @@ class PlayersController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
      * @return Response
      */
     public function index()
@@ -27,7 +26,6 @@ class PlayersController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
      * @param PlayerStoreRequest $request
      * @return Response
      */

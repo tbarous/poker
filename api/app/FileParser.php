@@ -8,6 +8,7 @@ use App\Models\Hand;
 use App\Models\Player;
 use App\Models\Round;
 use Error;
+use Exception;
 use File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Request;
@@ -19,107 +20,197 @@ class FileParser
 {
     /**
      * @return void
+     * @throws Exception
      */
     public function parse($file)
     {
-        $size = File::size($file);
+        $this->checkFileSize($file);
 
-        if ($size > 100000) {
-            self::error("File size is too large.");
-        };
-
-        $strengthCalculator = new StrengthCalculator();
-
+        // Get the contents of the file in string format.
         $content = File::get($file);
 
-        $allHandsToInsert = [];
+        // The final array with all the hands that will
+        // be inserted into the *hands* table.
+        $allHands = [];
 
-        $playersIds = [];
+        $playersIds = $this->createPlayers(8);
 
-        for ($i = 0; $i < 9; $i++) {
-            $playersIds[] = Player::factory()->create()->id;
-        }
+        // Set up the cards deck.
+        $deck = Card::get();
 
-        $cardsCollection = Card::get();
+        // Init a hand strength calculator instance to be used
+        // when calculating hand strengths.
+        $strengthCalculator = new StrengthCalculator();
 
-        $rounds = explode(PHP_EOL, $content);
+        // Transform the file content splitting it in
+        // newlines (/n) and storing it in the rounds array.
+        $rounds = array_filter(explode(PHP_EOL, $content));
 
+        // Loop each round. Each round should have the form
+        // '3D 7D QC KH JH 6D 6C TD TH KD'.
         foreach ($rounds as $roundKey => $round) {
-            $hands = self::getHands($round);
 
-            $handsToInsert = [];
+            // Get hands array in the form ['3D 7D QC KH JH', '6D 6C TD TH KD'].
+            $hands = $this->getHands($round, $roundKey);
 
-            if (empty($hands)) continue;
+            // The array where we store all the hands for the current round.
+            $roundHandsResult = [];
 
+            // Loop each hand of the round. Each hand should have the form '3D 7D QC KH JH'
             foreach ($hands as $handKey => $hand) {
-                $cards = self::getCards($hand);
 
-                if (empty($cards)) continue;
+                // Get cards array in the form ['3D', '7D', 'QC', 'KH', 'JH'].
+                $cards = $this->getCards($hand, $roundKey);
 
-                $handToInsert = [
+                // Initialize the current hand's data that will be inserted into the hands table.
+                $handData = [
                     'player_id' => $playersIds[$handKey],
                     'created_at' => Carbon::now()->toDateTimeString(),
                     'updated_at' => Carbon::now()->toDateTimeString()
                 ];
 
-                $collectionCards = [];
+                // Get the hands cards in a laravel collection form and also get the
+                // cards ids to be inserted into db with hand data above.
+                [$collectionCards, $handCards] = $this->getCollectionCards($cards, $deck, $roundKey);
 
-                foreach ($cards as $cardKey => $card) {
-                    $suit = Card::getSuitFromString($card);
-                    $rank = Card::getRankFromString($card);
+                // Merge hand data with hand card ids.
+                $handToInsert = array_merge($handData, $handCards);
 
-                    $collectionCard = $cardsCollection->where("suit", $suit)->where("rank", $rank)->first();
+                // Set up hand strength id.
+                $handToInsert['strength_id'] = $strengthCalculator->strengthId($collectionCards);
 
-                    if ($collectionCard) {
-                        $handToInsert[Hand::CARDS_ID[$cardKey]] = $collectionCard->id;
-                        $collectionCards[] = $collectionCard;
-                    }
-                }
-
-                $id = $strengthCalculator->strength($collectionCards);
-
-                $handToInsert['strength_id'] = $id;
-
-                $handsToInsert[] = $handToInsert;
+                // Add the current hand to the round hands array.
+                $roundHandsResult[] = $handToInsert;
             }
 
+            // Create a round id to be used with hands insertion.
             $roundId = Round::create()->id;
 
-            foreach ($handsToInsert as $h) {
+            // For the current round, each hand should have an associated round_id.
+            foreach ($roundHandsResult as $h) {
                 $h['round_id'] = $roundId;
 
-                $allHandsToInsert[] = $h;
+                $allHands[] = $h;
             }
         }
 
-        Hand::insert($allHandsToInsert);
-    }
-
-    private function error(string $message)
-    {
-        throw new Error($message);
+        // Insert all hands into hands table.
+        Hand::insert($allHands);
     }
 
     /**
-     * @param $hand
-     * @return false|string[]
+     * Check the received file's size.
+     *
+     * @return void
+     * @throws Exception
      */
-    private static function getCards($hand)
+    private function checkFileSize($file)
     {
-        return explode(" ", $hand);
+        $size = File::size($file);
+
+        if ($size > 1000000) {
+            $this->error("File size is too large.");
+        }
     }
 
     /**
-     * @param $round
+     * Creates dummy players and store their IDs in array.
+     *
+     * @param int $howMany
      * @return array
      */
-    private static function getHands($round): array
+    private function createPlayers(int $howMany): array
     {
-        $cards = explode(" ", $round);
+        $playersIds = [];
 
+        for ($i = 0; $i < $howMany; $i++) {
+            $playersIds[] = Player::factory()->create()->id;
+        }
+
+        return $playersIds;
+    }
+
+    /**
+     * Gets cards in the form of an array with 5 items.
+     * Parses every card, validates them and returns them
+     * as a 5 card collection.
+     * @param $cards
+     * @param $cardsCollection
+     * @param $roundKey
+     * @return array
+     * @throws Exception
+     */
+    private function getCollectionCards($cards, $cardsCollection, $roundKey): array
+    {
+        $collectionCards = [];
+        $handCards = [];
+
+        foreach ($cards as $cardKey => $card) {
+            $split = str_split($card);
+
+            if (empty($split) || count($split) !== 2) {
+                $this->error('Unknown card type on round: ' . ($roundKey + 1));
+            }
+
+            $suit = $split[1];
+            $rank = $split[0];
+
+            $collectionCard = $cardsCollection->where('suit', $suit)->where('rank', $rank)->first();
+
+            if ($collectionCard) {
+                $handCards[Hand::CARDS_ID[$cardKey]] = $collectionCard->id;
+
+                $collectionCards[] = $collectionCard;
+            } else {
+                $this->error('Unknown card type on round: ' . ($roundKey + 1));
+            }
+        }
+
+        return [$collectionCards, $handCards];
+    }
+
+    /**
+     * Throws error.
+     * @param string $message
+     * @return mixed
+     * @throws Exception
+     */
+    private function error(string $message)
+    {
+        throw new Exception($message);
+    }
+
+    /**
+     * Gets a hand's cards.
+     * @param $hand
+     * @param $roundIndex
+     * @return false|string[]
+     * @throws Exception
+     */
+    private function getCards($hand, $roundIndex)
+    {
+        $cards = explode(" ", $hand);
+
+        // If cards array is empty or less than 5 throw error
+        if (empty($cards) || count($cards) !== 5) {
+            $this->error('Cards at round ' . ($roundIndex + 1) . 'are malformed');
+        };
+
+        return $cards;
+    }
+
+    /**
+     * If hands array is empty or is not divisible by 5 throw an error.
+     * @param $round
+     * @param $index
+     * @return array
+     * @throws Exception
+     */
+    private function getHands($round, $index): array
+    {
         $hands = [];
-
         $hand = [];
+        $cards = explode(" ", $round);
 
         foreach ($cards as $card) {
             $hand[] = $card;
@@ -130,6 +221,10 @@ class FileParser
                 $hand = [];
             }
         }
+
+        if (empty($hands)) {
+            $this->error('Round ' . ($index + 1) . ' is malformed');
+        };
 
         return $hands;
     }
