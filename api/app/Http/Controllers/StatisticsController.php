@@ -9,10 +9,12 @@ use Illuminate\Http\Request;
 
 class StatisticsController extends Controller
 {
+    /**
+     * @return mixed
+     */
     public function index()
     {
         $rounds = Round::select(['id'])->with(
-            'hands',
             'hands.firstCard:id,rank,suit',
             'hands.strength:id,name',
             'hands.secondCard:id,rank,suit',
@@ -22,5 +24,17 @@ class StatisticsController extends Controller
         )->get();
 
         return response()->json(['rounds' => $rounds], 200);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function bestHands()
+    {
+        $hands = Hand::whereHas('strength', function ($query) {
+            $query->where('rank', '>', '5');
+        })->with('strength:id,name')->get();
+
+        return response()->json(['hands' => $hands], 200);
     }
 }
