@@ -11,11 +11,6 @@ class Card extends Model
 
     protected $fillable = ['suit', 'rank'];
 
-    protected $attributes = [
-        'suit',
-        'rank'
-    ];
-
     const Suits = ['H', 'C', 'S', 'D'];
     const Ranks = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'];
 

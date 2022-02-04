@@ -27,7 +27,7 @@ class CreateHandsTable extends Migration
 
             $table->unique(['round_id', 'player_id']);
 
-            $table->foreign('player_id')->references('id')->on('players');
+            $table->foreign('player_id')->references('id')->on('players')->onDelete('cascade');
             $table->foreign('round_id')->references('id')->on('rounds');
             $table->foreign('first_card_id')->references('id')->on('cards');
             $table->foreign('second_card_id')->references('id')->on('cards');

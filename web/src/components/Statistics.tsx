@@ -14,73 +14,85 @@ const TABLE = styled.table`
   width: 100%;
 `;
 
+const Hand = styled.div`
+  display: flex;
+`
+
+const Card = styled.div`
+  margin-right: 1rem;
+`
+
 const Statistics: FunctionComponent<{}> = () => {
-    const [rounds, setRounds] = useState([])
+    const [rounds, setRounds] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         getAPI().statistics().then(h => {
-            setRounds([...h.data])
+            setRounds(h.rounds);
+            setLoading(false);
         })
     })
 
     return (
-        <TABLE>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Hands</th>
-                <th>Winner</th>
-            </tr>
-            </thead>
-            <tbody>
-            {rounds.map(round => {
-                return (
-                    <TR key={round.id}>
-                        <TD>
-                            {round.id}
-                        </TD>
-                        <TD>
-                            {round.hands.map(hand => {
-                                return (
-                                    <div key={hand.id}>
-                                        <div>
-                                            {hand.first_card.rank}{hand.first_card.suit}
-                                        </div>
+        <>
+            {loading && "Loading data..."}
 
-                                        <div>
-                                            {hand.second_card.rank}{hand.second_card.suit}
-                                        </div>
+            {!loading && <TABLE>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Hands</th>
+                    <th>Winner</th>
+                </tr>
+                </thead>
+                <tbody>
+                {rounds.map(round => {
+                    return (
+                        <TR key={round.id}>
+                            <TD>
+                                {round.id}
+                            </TD>
+                            <TD>
+                                {round.hands.map(hand => {
+                                    return (
+                                        <Hand key={hand.id}>
+                                            <Card>
+                                                {hand.first_card.rank}{hand.first_card.suit}
+                                            </Card>
 
-                                        <div>
-                                            {hand.third_card.rank}{hand.third_card.suit}
-                                        </div>
+                                            <Card>
+                                                {hand.second_card.rank}{hand.second_card.suit}
+                                            </Card>
 
-                                        <div>
-                                            {hand.fourth_card.rank}{hand.fourth_card.suit}
-                                        </div>
+                                            <Card>
+                                                {hand.third_card.rank}{hand.third_card.suit}
+                                            </Card>
 
-                                        <div>
-                                            {hand.fifth_card.rank}{hand.fifth_card.suit}
-                                        </div>
+                                            <Card>
+                                                {hand.fourth_card.rank}{hand.fourth_card.suit}
+                                            </Card>
 
-                                        <div>
-                                            {hand.strength.name}
-                                        </div>
+                                            <Card>
+                                                {hand.fifth_card.rank}{hand.fifth_card.suit}
+                                            </Card>
 
-                                        <hr/>
-                                    </div>
-                                )
-                            })}
-                        </TD>
+                                            <Card>
+                                                {hand.strength.name}
+                                            </Card>
+                                        </Hand>
+                                    )
+                                })}
+                            </TD>
 
-                        <TD>
-                            {round.winner.name}
-                        </TD>
-                    </TR>
-                )
-            })}
-            </tbody>
-        </TABLE>
+                            <TD style={{textAlign: 'center'}}>
+                                {round.winner}
+                            </TD>
+                        </TR>
+                    )
+                })}
+                </tbody>
+            </TABLE>}
+        </>
     )
 }
 

@@ -10,8 +10,8 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 app.set('view engine', 'pug');
 
-app.get('/statistics', function (req, res) {
-    res.render('page', {env, title: "Login"})
+app.get('/', function (req, res) {
+    res.render('page', {env, title: "Statistics"})
 })
 
 app.get('/login', function (req, res) {

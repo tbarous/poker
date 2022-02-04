@@ -18,10 +18,12 @@ class PlayersController extends Controller
     {
         $players = Player::all();
 
-        return response([
+        $data = [
             'players' => PlayerResource::collection($players),
             'message' => 'Success'
-        ], 200);
+        ];
+
+        return response()->json($data, 200);
     }
 
     /**
@@ -29,7 +31,7 @@ class PlayersController extends Controller
      * @param PlayerStoreRequest $request
      * @return Response
      */
-    public function store(PlayerStoreRequest $request): Response
+    public function store(PlayerStoreRequest $request)
     {
         $data = $request->validated();
 
@@ -39,7 +41,7 @@ class PlayersController extends Controller
 
         $data = ['players' => $collection, 'message' => 'Success'];
 
-        return response($data, 200);
+        return response()->json($data, 200);
     }
 
     /**
@@ -48,7 +50,7 @@ class PlayersController extends Controller
      * @param Player $player
      * @return Response
      */
-    public function show(Player $player): Response
+    public function show(Player $player)
     {
         $player = new PlayerResource($player);
 
@@ -57,7 +59,7 @@ class PlayersController extends Controller
             'message' => 'Success'
         ];
 
-        return response($data, 200);
+        return response()->json($data, 200);
     }
 
     /**
@@ -67,11 +69,13 @@ class PlayersController extends Controller
      * @param Player $player
      * @return Response
      */
-    public function update(Request $request, Player $player): Response
+    public function update(Request $request, Player $player)
     {
         $player->update($request->all());
 
-        return response(['employee' => new PlayerResource($player), 'message' => 'Success'], 200);
+        $data = ['employee' => new PlayerResource($player), 'message' => 'Success'];
+
+        return response()->json($data, 200);
     }
 
     /**
@@ -80,10 +84,12 @@ class PlayersController extends Controller
      * @param Player $player
      * @return Response
      */
-    public function destroy(Player $player): Response
+    public function destroy(Player $player)
     {
         $player->delete();
 
-        return response(['message' => 'Employee deleted']);
+        $data = ['message' => 'Player deleted'];
+
+        return response()->json($data, 200);
     }
 }
