@@ -77,7 +77,7 @@ class FileParser
                 $handToInsert = array_merge($handData, $handCards);
 
                 // Set up hand strength id.
-                $handToInsert['strength_id'] = $strengthCalculator->strengthId($collectionCards);
+                $handToInsert['strength_id'] = $strengthCalculator->getStrength($collectionCards)->id;
 
                 // Add the current hand to the round hands array.
                 $roundHandsResult[] = $handToInsert;

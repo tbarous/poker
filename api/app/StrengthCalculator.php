@@ -8,25 +8,13 @@ use App\Models\Strength;
 class StrengthCalculator
 {
     public $strengths;
-    public $counts = [];
-    public $cards;
 
-    const MAPPING = [
-        'A' => 1,
-        '2' => 2,
-        '3' => 3,
-        '4' => 4,
-        '5' => 5,
-        '6' => 6,
-        '7' => 7,
-        '8' => 8,
-        '9' => 9,
-        'T' => 10,
-        'J' => 11,
-        'Q' => 12,
-        'K' => 13
-    ];
+    const MAPPING = ['A' => 1, '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6, '7' => 7, '8' => 8, '9' => 9, 'T' => 10, 'J' => 11, 'Q' => 12, 'K' => 13];
 
+    /**
+     * Setup strengths to be available throughout the instance's
+     * life.
+     */
     public function __construct()
     {
         $this->strengths = Strength::get();
@@ -36,23 +24,23 @@ class StrengthCalculator
      * @param $cards
      * @return mixed
      */
-    public function strengthId($cards)
+    public function getStrength($cards)
     {
         $counts = $this->getCounts($cards);
 
         // ROYAL FLUSH
         if ($this->hasFlush($cards) && $this->hasRoyal($cards)) {
-            return $this->strengths->where('rank', '10')->first()->id;
+            return $this->strengths->where('rank', '10')->first();
         }
 
         // STRAIGHT FLUSH
         if ($this->hasFlush($cards) && $this->hasStraight($cards)) {
-            return $this->strengths->where('rank', '9')->first()->id;
+            return $this->strengths->where('rank', '9')->first();
         }
 
         // FOUR OF A KIND
         if ($this->hasXofAKind($counts, 4)) {
-            return $this->strengths->where('rank', '8')->first()->id;
+            return $this->strengths->where('rank', '8')->first();
         }
 
         // FULL HOUSE
@@ -60,22 +48,22 @@ class StrengthCalculator
             $this->hasXofAKind($counts, 3) &&
             $this->hasXofAKind($this->countsExcept($counts, $this->hasXofAKind($counts, 3)), 2)
         ) {
-            return $this->strengths->where('rank', '7')->first()->id;
+            return $this->strengths->where('rank', '7')->first();
         }
 
         // FLUSH
         if ($this->hasFlush($cards)) {
-            return $this->strengths->where('rank', '6')->first()->id;
+            return $this->strengths->where('rank', '6')->first();
         }
 
         // STRAIGHT
         if ($this->hasStraight($cards)) {
-            return $this->strengths->where('rank', '5')->first()->id;
+            return $this->strengths->where('rank', '5')->first();
         }
 
         // THREE OF A KIND
         if ($this->hasXofAKind($counts, 3)) {
-            return $this->strengths->where('rank', '4')->first()->id;
+            return $this->strengths->where('rank', '4')->first();
         }
 
         // TWO PAIR
@@ -83,16 +71,16 @@ class StrengthCalculator
             $this->hasXofAKind($counts, 2) &&
             $this->hasXofAKind($this->countsExcept($counts, $this->hasXofAKind($counts, 2)), 2)
         ) {
-            return $this->strengths->where('rank', '3')->first()->id;
+            return $this->strengths->where('rank', '3')->first();
         }
 
         // ONE PAIR
         if ($this->hasXofAKind($counts, 2)) {
-            return $this->strengths->where('rank', '2')->first()->id;
+            return $this->strengths->where('rank', '2')->first();
         }
 
         // HIGH CARD
-        return $this->strengths->where('rank', '1')->first()->id;
+        return $this->strengths->where('rank', '1')->first();
     }
 
     /**
