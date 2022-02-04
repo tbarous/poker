@@ -19,6 +19,8 @@ RUN rm -rf vendor
 
 RUN rm composer.lock
 
+RUN composer update
+
 RUN composer install
 
 RUN chmod -R 777 storage
