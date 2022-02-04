@@ -176,8 +176,10 @@ class StrengthCalculator
     {
         $suit = $cards[0]->suit;
 
-        for ($i = 1; $i < 4; $i++) {
-            if ($cards[$i]->suit !== $suit) return false;
+        for ($i = 1; $i <= 4; $i++) {
+            if ($cards[$i]->suit !== $suit) {
+                return false;
+            }
         }
 
         return true;
