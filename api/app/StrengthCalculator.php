@@ -11,6 +11,22 @@ class StrengthCalculator
     public $counts = [];
     public $cards;
 
+    const MAPPING = [
+        'A' => 1,
+        '2' => 2,
+        '3' => 3,
+        '4' => 4,
+        '5' => 5,
+        '6' => 6,
+        '7' => 7,
+        '8' => 8,
+        '9' => 9,
+        'T' => 10,
+        'J' => 11,
+        'Q' => 12,
+        'K' => 13
+    ];
+
     public function __construct()
     {
         $this->strengths = Strength::get();
@@ -18,98 +34,109 @@ class StrengthCalculator
 
     public function strength($cards)
     {
-        $this->cards = $cards;
-        $this->counts = [];
+        $counts = $this->getCounts($cards);
 
-        $this->setCounts();
-
-        if ($this->hasFlush($cards) && $this->hasRoyal()) {
+        // ROYAL FLUSH
+        if ($this->hasFlush($cards) && $this->hasRoyal($cards)) {
             return $this->strengths->where('rank', '10')->first()->id;
         }
 
+        // STRAIGHT FLUSH
         if ($this->hasFlush($cards) && $this->hasStraight($cards)) {
             return $this->strengths->where('rank', '9')->first()->id;
         }
 
-        if (array_search(4, $this->counts)) {
+        // FOUR OF A KIND
+        if ($this->hasXofAKind($counts, 4)) {
             return $this->strengths->where('rank', '8')->first()->id;
         }
 
-        if (array_search(3, $this->counts) && array_search(2, $this->counts)) {
+        // FULL HOUSE
+        if (
+            $this->hasXofAKind($counts, 3) &&
+            $this->hasXofAKind($this->countsExcept($counts, $this->hasXofAKind($counts, 3)), 2)
+        ) {
             return $this->strengths->where('rank', '7')->first()->id;
         }
 
+        // FLUSH
         if ($this->hasFlush($cards)) {
             return $this->strengths->where('rank', '6')->first()->id;
         }
 
+        // STRAIGHT
         if ($this->hasStraight($cards)) {
             return $this->strengths->where('rank', '5')->first()->id;
         }
 
-        if (array_search(3, $this->counts)) {
+        // THREE OF A KIND
+        if ($this->hasXofAKind($counts, 3)) {
             return $this->strengths->where('rank', '4')->first()->id;
         }
 
-        if ($this->hasTwoPair($cards)) {
+        // TWO PAIR
+        if (
+            $this->hasXofAKind($counts, 2) &&
+            $this->hasXofAKind($this->countsExcept($counts, $this->hasXofAKind($counts, 2)), 2)
+        ) {
             return $this->strengths->where('rank', '3')->first()->id;
         }
 
-        if (array_search(2, $this->counts)) {
+        // ONE PAIR
+        if ($this->hasXofAKind($counts, 2)) {
             return $this->strengths->where('rank', '2')->first()->id;
         }
 
+        // HIGH CARD
         return $this->strengths->where('rank', '1')->first()->id;
     }
 
     /**
-     * @return void
+     * @param $counts
+     * @param $except
+     * @return array
      */
-    public function setCounts()
+    public function countsExcept($counts, $except): array
     {
-        foreach ($this->cards as $card) {
-            $rank = Card::getRankFromString($card);
+        return array_filter($counts, function ($key) use ($except) {
+            return $key !== $except;
+        }, ARRAY_FILTER_USE_KEY);
+    }
 
-            if (array_key_exists($rank, $this->counts)) {
-                $this->counts[$rank]++;
+    public function hasXofAKind($counts, int $x)
+    {
+        return array_search($x, $counts);
+    }
+
+    /**
+     * @param $cards
+     * @return array
+     */
+    public function getCounts($cards): array
+    {
+        $counts = [];
+
+        foreach ($cards as $card) {
+            if (array_key_exists($card->rank, $counts)) {
+                $counts[$card->rank]++;
             } else {
-                $this->counts[$rank] = 1;
+                $counts[$card->rank] = 1;
             }
         }
+
+        return $counts;
     }
 
     /**
      * @param $cards
      * @return bool
      */
-    public function hasTwoPair($cards): bool
-    {
-//        $array = [$cards[0]];
-//
-//        $pairs = [];
-//
-//        for ($i = 1; $i < 5; $i++) {
-//            $card = $cards[$i];
-//
-//            if (in_array($cards[$i], $array)) {
-//                $pairs[] = $cards[$i];
-//            }
-//
-//            $array[] = $card;
-//        }
-
-        return false;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasRoyal(): bool
+    public function hasRoyal($cards): bool
     {
         $array = ['K', 'A', 'J', 'T', 'Q'];
 
-        foreach ($this->cards as $card) {
-            $rank = Card::getRankFromString($card);
+        foreach ($cards as $card) {
+            $rank = $card->rank;
 
             if (in_array($rank, $array)) {
                 $array = array_filter($array, function ($card) use ($rank) {
@@ -123,15 +150,25 @@ class StrengthCalculator
         return true;
     }
 
-    private function hasStraight($ranks)
+    /**
+     * @param $cards
+     * @return bool
+     */
+    private function hasStraight($cards): bool
     {
-//        $rank = $ranks[0];
-//
-//        for ($i = 1; $i < 4; $i++) {
-//            $r = $ranks[$i];
-//        }
+        $indexedRank = self::MAPPING[$cards[0]->rank];
 
-        return false;
+        for ($i = 1; $i < 4; $i++) {
+            $cardIndexedRank = self::MAPPING[$cards[$i]->rank];
+
+            if ($cardIndexedRank === $indexedRank + 1 || $cardIndexedRank === $indexedRank - 1) {
+                $indexedRank = $cardIndexedRank;
+            } else {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -140,14 +177,10 @@ class StrengthCalculator
      */
     private function hasFlush($cards): bool
     {
-        $suit = Card::getSuitFromString($cards[0]);
+        $suit = $cards[0]->suit;
 
         for ($i = 1; $i < 4; $i++) {
-            $cardSuit = Card::getSuitFromString($cards[$i]);
-
-            if ($cardSuit !== $suit) {
-                return false;
-            }
+            if ($cards[$i]->suit !== $suit) return false;
         }
 
         return true;

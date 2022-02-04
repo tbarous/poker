@@ -62,6 +62,8 @@ class FileParser
                     'updated_at' => Carbon::now()->toDateTimeString()
                 ];
 
+                $collectionCards = [];
+
                 foreach ($cards as $cardKey => $card) {
                     $suit = Card::getSuitFromString($card);
                     $rank = Card::getRankFromString($card);
@@ -70,10 +72,11 @@ class FileParser
 
                     if ($collectionCard) {
                         $handToInsert[Hand::CARDS_ID[$cardKey]] = $collectionCard->id;
+                        $collectionCards[] = $collectionCard;
                     }
                 }
 
-                $id = $strengthCalculator->strength($cards);
+                $id = $strengthCalculator->strength($collectionCards);
 
                 $handToInsert['strength_id'] = $id;
 
