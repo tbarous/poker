@@ -37,7 +37,8 @@ token provided by *Login*. After login, all *Player* api CRUD services are avail
 shows.
 
 To populate the database with poker hands invoke the *Add Poker Data* call with a text file containing the hands.
-(NOTE: the postman collection DOES NOT include the .txt file despite showing it when imported, so the text file should be selected manually)
+(NOTE: the postman collection DOES NOT include the .txt file despite showing it when imported, so the text file should
+be selected manually)
 
 - phpmyadmin (in dev) available on: http://localhost:8000 [server: mysql, username: root, password: password]
 - rabbitmq manager available on: http://localhost:15672 [username: guest, password: guest]
@@ -45,3 +46,12 @@ To populate the database with poker hands invoke the *Add Poker Data* call with 
 - backend laravel available on endpoints :
     - http://localhost:8080/api/statistics [all poker rounds with hands and winners]
     - http://localhost:8080/api/best-hands [best poker hands (flush and up)]
+
+To run tests:
+
+    docker exec -it poker_api php artisan test
+
+NOTE: mongodb and rabbitmq manager are not used despite included.
+
+TODO: Hand comparison currently supports different ranks. When two hands are equal currently there is no higher cards
+comparison.
