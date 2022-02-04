@@ -24,7 +24,7 @@ Or for development:
 
     docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 
-Run migrations inside the api container:
+Run migrations inside the api container (NOTE: it might take some seconds before DB is ready to accept connections):
 
     docker exec -it poker_api php artisan migrate:fresh --seed --force
 
@@ -37,8 +37,9 @@ token provided by *Login*. After login, all *Player* api CRUD services are avail
 shows.
 
 To populate the database with poker hands invoke the *Add Poker Data* call with a text file containing the hands.
+(NOTE: the postman collection DOES NOT include the .txt file despite showing it when imported, so the text file should be selected manually)
 
-- phpmyadmin available on: http://localhost:8000 [server: mysql, username: root, password: password]
+- phpmyadmin (in dev) available on: http://localhost:8000 [server: mysql, username: root, password: password]
 - rabbitmq manager available on: http://localhost:15672 [username: guest, password: guest]
 - frontend react application available on http://localhost
 - backend laravel available on endpoints :
