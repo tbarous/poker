@@ -14,6 +14,8 @@ Images included:
 
 ### Instructions:
 
+Clone the repository and cd into it.
+
 Initialize the project for production with:
 
     docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
