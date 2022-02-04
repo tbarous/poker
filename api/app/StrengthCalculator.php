@@ -32,6 +32,10 @@ class StrengthCalculator
         $this->strengths = Strength::get();
     }
 
+    /**
+     * @param $cards
+     * @return mixed
+     */
     public function strengthId($cards)
     {
         $counts = $this->getCounts($cards);
@@ -103,6 +107,11 @@ class StrengthCalculator
         }, ARRAY_FILTER_USE_KEY);
     }
 
+    /**
+     * @param $counts
+     * @param int $x
+     * @return false|int|string
+     */
     public function hasXofAKind($counts, int $x)
     {
         return array_search($x, $counts);

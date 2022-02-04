@@ -7,12 +7,15 @@ use Tests\TestCase;
 
 class RegisterTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * A basic unit test example.
      *
+     * @test
      * @return void
      */
-    public function test_example()
+    public function players_can_register()
     {
         $response = $this->post('/api/register', [
             'name' => 'Anastasios',

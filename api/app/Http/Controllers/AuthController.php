@@ -14,6 +14,7 @@ class AuthController extends Controller
     const TOKEN_NAME = 'API Access';
 
     /**
+     * Registers a user.
      * @param RegisterRequest $request
      * @return mixed
      */
@@ -25,10 +26,13 @@ class AuthController extends Controller
 
         $player = Player::create($data);
 
-        return response(['player' => $player, 'token' => $this->token($player)], 200);
+        $data = ['player' => $player, 'token' => $this->token($player)];
+
+        return response()->json($data, 200);
     }
 
     /**
+     * Logins a user.
      * @param LoginRequest $request
      * @return mixed
      */
@@ -39,7 +43,9 @@ class AuthController extends Controller
         $valid = auth()->attempt($data);
 
         if (!$valid) {
-            return response(['error_message' => 'Incorrect Credentials. Please try again']);
+            $data = ['error' => 'Incorrect Credentials. Please try again'];
+
+            return response()->json($data, 422);
         }
 
         $player = auth()->user();
@@ -49,10 +55,11 @@ class AuthController extends Controller
             'token' => $this->token($player)
         ];
 
-        return response($data, 200);
+        return response()->json($data, 200);
     }
 
     /**
+     * Creates a unique token.
      * @param Player $player
      * @return string
      */
