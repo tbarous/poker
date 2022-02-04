@@ -15,6 +15,8 @@ COPY api .
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
-RUN sudo composer install
+RUN chmod -R 777 .
+
+RUN composer install
 
 RUN chmod -R 777 storage
