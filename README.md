@@ -14,17 +14,24 @@ Images included:
 
 ### Instructions:
 
-Initialize the project with:
+Initialize the project for production with:
 
     docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 
-Run migrations inside api container:
+Or for development:
 
-    docker exec -it poker_api php artisan migrate:fresh --seed
+    docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 
-Postman collection for api calls exists in root with name: 
+Run migrations inside the api container:
+
+    docker exec -it poker_api php artisan migrate:fresh --seed --force
+
+Postman collection for api calls exists in root with name:
 
     poker.postman_collection.json
+
+Upon *Register* postman call and then *Login* the *Player* api calls will inherit and authorization header with the
+token provided by *Login*
 
 - phpmyadmin available on: http://localhost:8000 [server: mysql, username: root, password: password]
 - rabbitmq manager available on: http://localhost:15672 [username: guest, password: guest]

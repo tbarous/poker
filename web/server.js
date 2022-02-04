@@ -4,7 +4,7 @@ const port = 3000;
 const path = require('path');
 const process = require('process');
 
-const env = process.env.ENVIRONMENT === "prod" ? "prod" : "dev";
+const env = process.env.ENVIRONMENT === "production" ? "production" : "dev";
 
 app.use(express.static(path.join(__dirname, 'dist')));
 

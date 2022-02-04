@@ -26,7 +26,7 @@ class AuthController extends Controller
 
         $player = Player::create($data);
 
-        $data = ['player' => $player, 'token' => $this->token($player)];
+        $data = ['player' => $player, 'token' => $this->token($player), 'message' => 'Successful player registration'];
 
         return response()->json($data, 200);
     }
@@ -52,7 +52,8 @@ class AuthController extends Controller
 
         $data = [
             'player' => $player,
-            'token' => $this->token($player)
+            'token' => $this->token($player),
+            'message' => 'Successful player login'
         ];
 
         return response()->json($data, 200);
